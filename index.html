@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Korean-Nepali Vocabulary - Random Play</title>
+    <title>Korean-Nepali Vocabulary - Chapters & Random Play</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Inter & Noto Sans KR / Devanagari -->
@@ -22,7 +22,7 @@
         .font-np {
             font-family: 'Noto Sans Devanagari', sans-serif;
         }
-        /* Custom Range Slider matching screenshot */
+        /* Custom Range Slider */
         input[type=range].teal-slider {
             -webkit-appearance: none;
             width: 100%;
@@ -52,19 +52,11 @@
         input[type=range].teal-slider::-webkit-slider-thumb:active {
             transform: scale(1.2);
         }
-        /* Custom Toggle Switch */
-        .toggle-checkbox:checked {
-            right: 0;
-            border-color: #00D2B8;
-        }
-        .toggle-checkbox:checked + .toggle-label {
-            background-color: #B2F5EA;
-        }
         /* Smooth card transitions */
-        .vocab-card {
+        .vocab-card, .chapter-card {
             transition: background-color 0.25s ease, transform 0.15s ease, box-shadow 0.25s ease;
         }
-        .vocab-card:active {
+        .vocab-card:active, .chapter-card:active {
             transform: scale(0.99);
         }
         /* Hide scrollbars cleanly where appropriate */
@@ -79,113 +71,210 @@
 </head>
 <body class="bg-gray-100 flex justify-center min-h-screen">
 
-    <!-- Mobile-first App Container (Full width on mobile, centered phone-like container on desktop) -->
+    <!-- Mobile-first App Container -->
     <div class="w-full max-w-md bg-white min-h-screen shadow-xl flex flex-col relative overflow-x-hidden">
 
-        <!-- Sticky Top Section (App Bar + Controls) -->
-        <header class="sticky top-0 z-30 bg-white shadow-sm">
-            <!-- Vibrant Purple App Bar -->
-            <div class="bg-[#5B00FF] text-white px-4 py-3 flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <button id="shuffleBtn" title="Shuffle Cards" class="p-1.5 rounded-full hover:bg-white/15 active:bg-white/25 transition flex items-center justify-center">
-                        <!-- Back / Shuffle Arrow Icon -->
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                        </svg>
-                    </button>
-                    <h1 class="text-xl font-semibold tracking-tight select-none">Random Play</h1>
+        <!-- ========================================================= -->
+        <!-- VIEW 1: CHAPTERS / TOPICS HOME SCREEN                     -->
+        <!-- ========================================================= -->
+        <div id="chaptersView" class="flex-1 flex flex-col min-h-screen">
+            <header class="sticky top-0 z-30 bg-white shadow-sm">
+                <!-- Vibrant Purple App Bar -->
+                <div class="bg-[#5B00FF] text-white px-4 py-3.5 flex items-center justify-between">
+                    <div class="flex items-center space-x-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h1 class="text-lg font-bold tracking-tight leading-tight select-none">Korean-Nepali Vocab</h1>
+                            <p class="text-[11px] text-purple-200 font-medium">Select a chapter or create a new topic</p>
+                        </div>
+                    </div>
+                    <span id="totalChaptersBadge" class="text-xs font-semibold bg-white/15 px-2.5 py-1 rounded-full">
+                        1 Chapter
+                    </span>
                 </div>
 
-                <div class="flex items-center space-x-2">
-                    <!-- Filter Favorites Toggle -->
-                    <button id="favFilterBtn" title="Show Favorites Only" class="p-2 rounded-lg bg-white/15 hover:bg-white/25 transition text-white">
-                        <svg id="favFilterIcon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
-
-                    <!-- PRACTICE Button -->
-                    <button id="practiceBtn" class="bg-[#2196F3] hover:bg-[#1E88E5] active:bg-[#1976D2] text-white font-semibold text-xs tracking-wider uppercase px-4 py-2.5 rounded-md shadow transition">
-                        PRACTICE
-                    </button>
+                <!-- Sub-bar info -->
+                <div class="px-4 py-2 bg-gray-50 border-b border-gray-100 flex items-center justify-between text-xs text-gray-500">
+                    <span id="totalWordsOverview">16 total words</span>
+                    <button id="resetAllChaptersBtn" class="text-gray-400 hover:text-gray-600 hover:underline">Reset Default</button>
                 </div>
-            </div>
+            </header>
 
-            <!-- Control Bar: Auto Play, Translation Toggle, Picture Toggle, Speed Slider -->
-            <div class="px-3.5 py-3 bg-white border-b border-gray-100 flex items-center justify-between gap-2">
-                
-                <!-- Auto Play Switch -->
-                <div class="flex items-center space-x-2 shrink-0">
-                    <span class="text-xs sm:text-sm font-bold text-gray-900 select-none">Auto Play</span>
-                    <button id="autoPlayToggle" role="switch" aria-checked="false" class="relative inline-flex items-center h-6 w-11 rounded-full bg-gray-200 transition-colors duration-200 focus:outline-none">
-                        <span id="autoPlayKnob" class="inline-block w-5 h-5 transform bg-[#BDBDBD] rounded-full shadow transition-transform duration-200 translate-x-0.5"></span>
-                    </button>
+            <!-- Chapter Cards List -->
+            <main id="chapterListContainer" class="flex-1 p-3 space-y-3 pb-24">
+                <!-- Chapters rendered dynamically here -->
+            </main>
+
+            <!-- Floating Action Button (+ Add Chapter) -->
+            <button id="openAddChapterModalBtn" title="Add New Chapter / Topic" class="fixed bottom-6 right-6 sm:right-[calc(50%-200px)] z-30 w-14 h-14 rounded-full bg-[#5B00FF] hover:bg-[#4A00D1] active:scale-95 text-white shadow-lg flex items-center justify-center transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- VIEW 2: INSIDE CHAPTER (RANDOM PLAY VOCABULARY VIEW)      -->
+        <!-- ========================================================= -->
+        <div id="vocabView" class="hidden flex-1 flex-col min-h-screen">
+            <!-- Sticky Top Section (App Bar + Controls) -->
+            <header class="sticky top-0 z-30 bg-white shadow-sm">
+                <!-- Vibrant Purple App Bar -->
+                <div class="bg-[#5B00FF] text-white px-4 py-3 flex items-center justify-between">
+                    <div class="flex items-center space-x-2.5 min-w-0 pr-2">
+                        <button id="backToChaptersBtn" title="Back to Chapters" class="p-1.5 rounded-full hover:bg-white/15 active:bg-white/25 transition flex items-center justify-center shrink-0">
+                            <!-- Back Arrow Icon -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                        </button>
+                        <div class="min-w-0">
+                            <h1 id="currentChapterHeaderTitle" class="text-lg font-semibold tracking-tight select-none truncate">Chapter 1</h1>
+                            <p id="currentChapterHeaderSub" class="text-[11px] text-purple-200 truncate">Random Play</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center space-x-2 shrink-0">
+                        <!-- Filter Favorites Toggle -->
+                        <button id="favFilterBtn" title="Show Favorites Only" class="p-2 rounded-lg bg-white/15 hover:bg-white/25 transition text-white">
+                            <svg id="favFilterIcon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+
+                        <!-- PRACTICE Button -->
+                        <button id="practiceBtn" class="bg-[#2196F3] hover:bg-[#1E88E5] active:bg-[#1976D2] text-white font-semibold text-xs tracking-wider uppercase px-4 py-2.5 rounded-md shadow transition">
+                            PRACTICE
+                        </button>
+                    </div>
                 </div>
 
-                <!-- Circular Toggle Buttons (Translation & Picture) -->
-                <div class="flex items-center space-x-2.5 shrink-0">
-                    <!-- Toggle Translation Button -->
-                    <button id="toggleTranslationBtn" title="Show/Hide Translations" class="w-11 h-11 rounded-full bg-[#2196F3] text-white flex items-center justify-center shadow-sm transition-all duration-200 active:scale-95">
-                        <!-- Translate A/文 Icon -->
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0014.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/>
-                        </svg>
-                    </button>
+                <!-- Control Bar: Auto Play, Translation Toggle, Picture Toggle, Speed Slider -->
+                <div class="px-3.5 py-3 bg-white border-b border-gray-100 flex items-center justify-between gap-2">
+                    
+                    <!-- Auto Play Switch -->
+                    <div class="flex items-center space-x-2 shrink-0">
+                        <span class="text-xs sm:text-sm font-bold text-gray-900 select-none">Auto Play</span>
+                        <button id="autoPlayToggle" role="switch" aria-checked="false" class="relative inline-flex items-center h-6 w-11 rounded-full bg-gray-200 transition-colors duration-200 focus:outline-none">
+                            <span id="autoPlayKnob" class="inline-block w-5 h-5 transform bg-[#BDBDBD] rounded-full shadow transition-transform duration-200 translate-x-0.5"></span>
+                        </button>
+                    </div>
 
-                    <!-- Toggle Picture Button -->
-                    <button id="toggleImageBtn" title="Show/Hide Pictures" class="w-11 h-11 rounded-full bg-[#2196F3] text-white flex items-center justify-center shadow-sm transition-all duration-200 active:scale-95">
-                        <!-- Image Landscape Icon -->
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
-                        </svg>
-                    </button>
+                    <!-- Circular Toggle Buttons (Translation & Picture) -->
+                    <div class="flex items-center space-x-2.5 shrink-0">
+                        <!-- Toggle Translation Button -->
+                        <button id="toggleTranslationBtn" title="Show/Hide Translations" class="w-11 h-11 rounded-full bg-[#2196F3] text-white flex items-center justify-center shadow-sm transition-all duration-200 active:scale-95">
+                            <!-- Translate A/文 Icon -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0014.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/>
+                            </svg>
+                        </button>
+
+                        <!-- Toggle Picture Button -->
+                        <button id="toggleImageBtn" title="Show/Hide Pictures" class="w-11 h-11 rounded-full bg-[#2196F3] text-white flex items-center justify-center shadow-sm transition-all duration-200 active:scale-95">
+                            <!-- Image Landscape Icon -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Speed / Rate Slider -->
+                    <div class="flex-1 min-w-[70px] max-w-[110px] flex items-center pl-1">
+                        <input id="speedSlider" type="range" min="0.6" max="1.6" step="0.1" value="1.0" title="Auto Play & Speech Speed" class="teal-slider">
+                    </div>
                 </div>
 
-                <!-- Speed / Rate Slider -->
-                <div class="flex-1 min-w-[70px] max-w-[110px] flex items-center pl-1">
-                    <input id="speedSlider" type="range" min="0.6" max="1.6" step="0.1" value="1.0" title="Auto Play & Speech Speed" class="teal-slider">
+                <!-- Subtle Info / Action Sub-bar -->
+                <div class="px-4 py-1.5 bg-gray-50 border-b border-gray-100 flex items-center justify-between text-xs text-gray-500">
+                    <span id="cardCountLabel">16 words</span>
+                    <div class="flex items-center space-x-3">
+                        <button id="openBulkModalBtn" class="text-[#2196F3] font-semibold hover:underline flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            Bulk Import
+                        </button>
+                        <button id="shuffleTextBtn" class="text-[#5B00FF] font-medium hover:underline flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            Shuffle
+                        </button>
+                        <button id="resetDataBtn" class="text-gray-400 hover:text-gray-600 hover:underline">Clear</button>
+                    </div>
                 </div>
-            </div>
+            </header>
 
-            <!-- Subtle Info / Action Sub-bar -->
-            <div class="px-4 py-1.5 bg-gray-50 border-b border-gray-100 flex items-center justify-between text-xs text-gray-500">
-                <span id="cardCountLabel">16 words</span>
-                <div class="flex items-center space-x-3">
-                    <button id="openBulkModalBtn" class="text-[#2196F3] font-semibold hover:underline flex items-center gap-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        Bulk Import
-                    </button>
-                    <button id="shuffleTextBtn" class="text-[#5B00FF] font-medium hover:underline flex items-center gap-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                        </svg>
-                        Shuffle
-                    </button>
-                    <button id="resetDataBtn" class="text-gray-400 hover:text-gray-600 hover:underline">Reset</button>
-                </div>
-            </div>
-        </header>
+            <!-- Main Scrollable Vocabulary Card List -->
+            <main id="cardListContainer" class="flex-1 p-2.5 space-y-2.5 pb-24">
+                <!-- Cards are dynamically rendered here -->
+            </main>
 
-        <!-- Main Scrollable Vocabulary Card List -->
-        <main id="cardListContainer" class="flex-1 p-2.5 space-y-2.5 pb-24">
-            <!-- Cards are dynamically rendered here -->
-        </main>
+            <!-- Floating Action Button (+ Add Word) -->
+            <button id="openAddModalBtn" title="Add New Word" class="fixed bottom-6 right-6 sm:right-[calc(50%-200px)] z-30 w-14 h-14 rounded-full bg-[#5B00FF] hover:bg-[#4A00D1] active:scale-95 text-white shadow-lg flex items-center justify-center transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+            </button>
+        </div>
 
-        <!-- Floating Action Button (+ Add Word) -->
-        <button id="openAddModalBtn" title="Add New Word" class="fixed bottom-6 right-6 sm:right-[calc(50%-200px)] z-30 w-14 h-14 rounded-full bg-[#5B00FF] hover:bg-[#4A00D1] active:scale-95 text-white shadow-lg flex items-center justify-center transition">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-            </svg>
-        </button>
-
-        <!-- Toast Notification Box (Replaces alert()) -->
+        <!-- ========================================================= -->
+        <!-- TOAST NOTIFICATION BOX                                    -->
+        <!-- ========================================================= -->
         <div id="toastBox" class="fixed bottom-24 left-1/2 transform -translate-x-1/2 z-50 bg-gray-900/90 text-white text-xs font-medium px-4 py-2.5 rounded-full shadow-lg opacity-0 pointer-events-none transition-opacity duration-300">
             Notification
         </div>
 
-        <!-- Add / Edit Vocabulary Modal -->
+        <!-- ========================================================= -->
+        <!-- MODAL 1: ADD / EDIT CHAPTER MODAL                         -->
+        <!-- ========================================================= -->
+        <div id="chapterModal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs hidden items-center justify-center p-4">
+            <div class="bg-white rounded-2xl w-full max-w-sm p-5 shadow-2xl transform transition-all">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 id="chapterModalTitle" class="text-lg font-bold text-gray-900">Add New Chapter</h2>
+                    <button id="closeChapterModalBtn" class="p-1 text-gray-400 hover:text-gray-600 rounded-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <form id="chapterForm" class="space-y-4">
+                    <input type="hidden" id="editChapterId">
+                    
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">Chapter / Topic Name *</label>
+                        <input type="text" id="inputChapterTitle" required placeholder="e.g., Chapter 2 or 농업 (Agriculture)" class="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#5B00FF] focus:border-[#5B00FF] outline-none font-kr text-base">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">Description / Subtitle (Optional)</label>
+                        <input type="text" id="inputChapterSubtitle" placeholder="e.g., Weather, Daily Verbs, EPS-TOPIK" class="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#5B00FF] focus:border-[#5B00FF] outline-none text-sm">
+                    </div>
+
+                    <div class="pt-2 flex items-center justify-end gap-2">
+                        <button type="button" id="deleteChapterBtn" class="mr-auto px-3.5 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 rounded-xl hidden">
+                            Delete
+                        </button>
+                        <button type="button" id="cancelChapterModalBtn" class="px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-xl">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-5 py-2.5 text-sm font-semibold text-white bg-[#5B00FF] hover:bg-[#4A00D1] rounded-xl shadow">
+                            Save Chapter
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- MODAL 2: ADD / EDIT VOCABULARY CARD MODAL                 -->
+        <!-- ========================================================= -->
         <div id="wordModal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs hidden items-center justify-center p-4">
             <div class="bg-white rounded-2xl w-full max-w-sm p-5 shadow-2xl transform transition-all">
                 <div class="flex items-center justify-between mb-4">
@@ -247,7 +336,9 @@
             </div>
         </div>
 
-        <!-- Bulk Import Modal (Paste 100+ Words with Optional Image URLs) -->
+        <!-- ========================================================= -->
+        <!-- MODAL 3: BULK IMPORT MODAL (WITH IMAGE URL SUPPORT)       -->
+        <!-- ========================================================= -->
         <div id="bulkModal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs hidden items-center justify-center p-4">
             <div class="bg-white rounded-2xl w-full max-w-sm p-5 shadow-2xl transform transition-all">
                 <div class="flex items-center justify-between mb-2">
@@ -289,7 +380,9 @@
             </div>
         </div>
 
-        <!-- Practice Flashcard Quiz Modal -->
+        <!-- ========================================================= -->
+        <!-- MODAL 4: PRACTICE FLASHCARD QUIZ MODAL                    -->
+        <!-- ========================================================= -->
         <div id="practiceModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs hidden items-center justify-center p-4">
             <div class="bg-white rounded-3xl w-full max-w-sm p-6 shadow-2xl flex flex-col items-center text-center relative">
                 <button id="closePracticeBtn" class="absolute top-4 right-4 p-1.5 text-gray-400 hover:text-gray-700 rounded-full">
@@ -333,13 +426,11 @@
 
     <script>
         /**
-         * Custom Inline SVG Illustrations matching the vocabulary cards in the screenshots
-         * Stored as clean data/markup functions so they render crisply at any size without broken external links.
+         * Custom Inline SVG Illustrations matching the vocabulary cards
          */
         const ILLUSTRATIONS = {
             sunnyWeather: `
                 <svg viewBox="0 0 180 180" class="w-40 h-40 bg-white rounded-md p-2 shadow-2xs">
-                    <!-- Sun with dashed rays -->
                     <circle cx="48" cy="44" r="18" fill="#F6D365" stroke="#333" stroke-width="2"/>
                     <g stroke="#333" stroke-width="2" stroke-linecap="round">
                         <line x1="48" y1="16" x2="48" y2="20"/>
@@ -351,48 +442,36 @@
                         <line x1="68" y1="24" x2="65" y2="27"/>
                         <line x1="31" y1="61" x2="28" y2="64"/>
                     </g>
-                    <!-- Girl walking happily in sun hat and orange dress -->
-                    <!-- Hat brim -->
                     <ellipse cx="105" cy="76" rx="34" ry="9" transform="rotate(14 105 76)" fill="#B57EDC" stroke="#333" stroke-width="2"/>
                     <path d="M88 73 C92 58, 118 62, 120 78" fill="#B57EDC" stroke="#333" stroke-width="2"/>
-                    <!-- Face -->
                     <circle cx="102" cy="88" r="14" fill="#FFE0BD" stroke="#333" stroke-width="2"/>
-                    <!-- Happy closed eyes & smile -->
                     <path d="M94 86 Q97 83 100 86" fill="none" stroke="#333" stroke-width="1.8" stroke-linecap="round"/>
                     <path d="M105 88 Q108 85 111 88" fill="none" stroke="#333" stroke-width="1.8" stroke-linecap="round"/>
                     <path d="M97 94 Q102 98 107 94" fill="none" stroke="#333" stroke-width="1.8" stroke-linecap="round"/>
-                    <!-- Dress -->
                     <path d="M92 102 L112 104 L132 136 L78 136 Z" fill="#E86F52" stroke="#333" stroke-width="2" stroke-linejoin="round"/>
-                    <!-- Arms -->
                     <path d="M91 106 L74 122 L80 126 L93 114" fill="#FFE0BD" stroke="#333" stroke-width="2" stroke-linejoin="round"/>
                     <path d="M112 108 L134 114 L132 120 L111 115" fill="#FFE0BD" stroke="#333" stroke-width="2" stroke-linejoin="round"/>
-                    <!-- Legs -->
                     <path d="M92 136 L84 162 L91 164 L99 136" fill="#FFE0BD" stroke="#333" stroke-width="2"/>
                     <path d="M108 136 L122 152 L134 146 L136 152 L118 160 L102 136" fill="#FFE0BD" stroke="#333" stroke-width="2"/>
                 </svg>
             `,
             rainUmbrella: `
                 <svg viewBox="0 0 180 180" class="w-40 h-40 bg-white rounded-md p-2 shadow-2xs">
-                    <!-- Raindrops -->
                     <g fill="#64748B">
                         <circle cx="25" cy="30" r="2"/><circle cx="155" cy="35" r="2"/>
                         <circle cx="30" cy="75" r="2"/><circle cx="150" cy="80" r="2"/>
                         <circle cx="20" cy="120" r="2"/><circle cx="160" cy="125" r="2"/>
                         <circle cx="40" cy="20" r="1.5"/><circle cx="140" cy="22" r="1.5"/>
                     </g>
-                    <!-- Yellow Umbrella -->
                     <path d="M35 65 C35 22, 145 22, 145 65 Q118 56 90 65 Q62 56 35 65 Z" fill="#FACC15" stroke="#333" stroke-width="2"/>
                     <line x1="90" y1="28" x2="90" y2="20" stroke="#333" stroke-width="2.5" stroke-linecap="round"/>
                     <path d="M90 62 L90 122 Q90 130 83 130" fill="none" stroke="#333" stroke-width="2.5" stroke-linecap="round"/>
-                    <!-- Person 1 (Pink sweater) -->
                     <circle cx="62" cy="95" r="15" fill="#FFE0BD" stroke="#333" stroke-width="2"/>
                     <path d="M47 93 C47 76, 77 76, 77 93 C72 86, 52 86, 47 93 Z" fill="#4A3525" stroke="#333" stroke-width="2"/>
                     <circle cx="66" cy="95" r="1.5" fill="#333"/>
                     <path d="M44 165 L48 115 Q62 110 76 115 L80 165 Z" fill="#F48FB1" stroke="#333" stroke-width="2"/>
-                    <!-- Hand holding umbrella -->
                     <path d="M72 122 L88 116" stroke="#333" stroke-width="2"/>
                     <circle cx="90" cy="115" r="4" fill="#FFE0BD" stroke="#333" stroke-width="1.5"/>
-                    <!-- Person 2 (Green sweater) -->
                     <circle cx="118" cy="96" r="15" fill="#FFE0BD" stroke="#333" stroke-width="2"/>
                     <path d="M103 95 C103 76, 133 76, 133 95 C128 87, 108 87, 103 95 Z" fill="#2D3748" stroke="#333" stroke-width="2"/>
                     <circle cx="113" cy="96" r="1.5" fill="#333"/>
@@ -401,27 +480,21 @@
             `,
             officeWorker: `
                 <svg viewBox="0 0 180 180" class="w-40 h-40 bg-white rounded-md p-2 shadow-2xs">
-                    <!-- Chair -->
                     <rect x="122" y="65" width="12" height="45" rx="5" fill="#E07A5F" stroke="#333" stroke-width="2"/>
                     <rect x="98" y="108" width="32" height="10" rx="4" fill="#E07A5F" stroke="#333" stroke-width="2"/>
                     <line x1="114" y1="118" x2="114" y2="145" stroke="#333" stroke-width="3"/>
                     <line x1="100" y1="145" x2="128" y2="145" stroke="#333" stroke-width="3" stroke-linecap="round"/>
-                    <!-- Person -->
                     <circle cx="95" cy="42" r="16" fill="#FFE0BD" stroke="#333" stroke-width="2"/>
                     <path d="M80 38 C80 20, 112 20, 111 40 C106 31, 86 31, 80 38 Z" fill="#4A3525" stroke="#333" stroke-width="2"/>
                     <circle cx="88" cy="42" r="1.5" fill="#333"/>
                     <path d="M86 49 Q90 52 94 49" fill="none" stroke="#333" stroke-width="1.5" stroke-linecap="round"/>
-                    <!-- Shirt & Tie -->
                     <path d="M82 60 L112 60 L116 105 L82 105 Z" fill="#FFFFFF" stroke="#333" stroke-width="2"/>
                     <polygon points="88,60 93,60 91,85 87,85" fill="#DD6B20" stroke="#333" stroke-width="1.5"/>
-                    <!-- Desk -->
                     <polygon points="20,95 95,85 115,112 35,124" fill="#68B984" stroke="#333" stroke-width="2" stroke-linejoin="round"/>
                     <polygon points="35,124 115,112 115,148 35,160" fill="#D5CEA3" stroke="#333" stroke-width="2" stroke-linejoin="round"/>
                     <polygon points="20,95 35,124 35,160 20,130" fill="#A69F7D" stroke="#333" stroke-width="2" stroke-linejoin="round"/>
-                    <!-- Computer Monitor -->
                     <polygon points="38,42 46,40 56,88 48,90" fill="#E2E8F0" stroke="#333" stroke-width="2"/>
                     <rect x="44" y="88" width="14" height="6" fill="#718096" stroke="#333" stroke-width="1.5"/>
-                    <!-- Keyboard & Arms -->
                     <polygon points="58,96 76,93 82,102 64,105" fill="#EDF2F7" stroke="#333" stroke-width="1.5"/>
                     <path d="M98 68 L72 95" stroke="#333" stroke-width="8" stroke-linecap="round"/>
                     <path d="M98 68 L72 95" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
@@ -429,31 +502,22 @@
             `,
             autumnSeason: `
                 <svg viewBox="0 0 180 180" class="w-40 h-40 bg-white rounded-md p-2 shadow-2xs">
-                    <!-- Ground -->
                     <path d="M10 148 Q90 138 170 148 L170 170 L10 170 Z" fill="#D6CFC7"/>
                     <path d="M10 148 Q90 138 170 148" fill="none" stroke="#333" stroke-width="2"/>
-                    <!-- Wind swirls -->
                     <path d="M22 65 Q45 65 55 82" fill="none" stroke="#555" stroke-width="1.8" stroke-linecap="round"/>
                     <path d="M18 82 Q38 82 46 96" fill="none" stroke="#555" stroke-width="1.8" stroke-linecap="round"/>
-                    <!-- Falling Autumn Leaves -->
                     <polygon points="35,105 42,100 45,108 38,113" fill="#D97706" stroke="#333" stroke-width="1.3"/>
                     <polygon points="62,92 69,88 71,95 64,99" fill="#B45309" stroke="#333" stroke-width="1.3"/>
                     <polygon points="30,132 38,126 42,135 33,139" fill="#EA580C" stroke="#333" stroke-width="1.3"/>
                     <polygon points="142,128 149,124 150,132 143,135" fill="#D97706" stroke="#333" stroke-width="1.3"/>
-                    <!-- Person walking in trench coat -->
-                    <!-- Green Fedora Hat -->
                     <ellipse cx="98" cy="44" rx="26" ry="6" fill="#68A357" stroke="#333" stroke-width="2"/>
                     <path d="M84 42 L88 26 L110 26 L114 42 Z" fill="#68A357" stroke="#333" stroke-width="2"/>
                     <rect x="86" y="37" width="26" height="4" fill="#3B6E2C"/>
-                    <!-- Head -->
                     <circle cx="96" cy="56" r="12" fill="#FFE0BD" stroke="#333" stroke-width="2"/>
                     <circle cx="90" cy="55" r="1.5" fill="#333"/>
-                    <!-- Trench Coat -->
                     <path d="M86 68 L112 68 L120 132 L80 132 Z" fill="#C8C2AE" stroke="#333" stroke-width="2" stroke-linejoin="round"/>
-                    <!-- Coat Belt & Pocket -->
                     <line x1="83" y1="96" x2="115" y2="96" stroke="#333" stroke-width="2"/>
                     <path d="M98 76 L94 102 L104 102" fill="none" stroke="#333" stroke-width="1.8" stroke-linecap="round"/>
-                    <!-- Legs & Orange Shoes -->
                     <rect x="88" y="132" width="8" height="14" fill="#4A5568" stroke="#333" stroke-width="1.8"/>
                     <path d="M78 146 L96 146 L96 152 L76 152 Z" fill="#DD6B20" stroke="#333" stroke-width="1.8"/>
                     <rect x="104" y="132" width="8" height="14" fill="#4A5568" stroke="#333" stroke-width="1.8"/>
@@ -463,7 +527,7 @@
         };
 
         /**
-         * Default Vocabulary Data (from the screenshots + complete Korean/Nepali pairs)
+         * Default Vocabulary Data for Chapter 1
          */
         const DEFAULT_CARDS = [
             { id: 'c1', korean: '다음 주', nepali: 'अर्को हप्ता', imageKey: null, customImage: null, favorite: false },
@@ -484,9 +548,21 @@
             { id: 'c16', korean: '걸리다', nepali: 'समय लाग्नु / अड्किनु', imageKey: null, customImage: null, favorite: false }
         ];
 
+        function createDefaultChapters() {
+            return [
+                {
+                    id: 'ch_1',
+                    title: 'Chapter 1',
+                    subtitle: 'Basic Vocabulary & Weather',
+                    cards: JSON.parse(JSON.stringify(DEFAULT_CARDS))
+                }
+            ];
+        }
+
         // Application State
         let state = {
-            cards: [],
+            chapters: [],
+            activeChapterId: null, // null = Chapters Home Screen; string = Inside Chapter
             showTranslation: true,
             showImage: true,
             autoPlay: false,
@@ -500,9 +576,18 @@
             tempUploadedImage: null
         };
 
-        const STORAGE_KEY = 'kr_np_vocab_cards_v1';
+        const CHAPTERS_STORAGE_KEY = 'kr_np_vocab_chapters_v1';
+        const LEGACY_STORAGE_KEY = 'kr_np_vocab_cards_v1';
 
         // DOM Elements
+        const chaptersView = document.getElementById('chaptersView');
+        const vocabView = document.getElementById('vocabView');
+        const chapterListContainer = document.getElementById('chapterListContainer');
+        const totalChaptersBadge = document.getElementById('totalChaptersBadge');
+        const totalWordsOverview = document.getElementById('totalWordsOverview');
+        const currentChapterHeaderTitle = document.getElementById('currentChapterHeaderTitle');
+        const currentChapterHeaderSub = document.getElementById('currentChapterHeaderSub');
+
         const cardListContainer = document.getElementById('cardListContainer');
         const toggleTranslationBtn = document.getElementById('toggleTranslationBtn');
         const toggleImageBtn = document.getElementById('toggleImageBtn');
@@ -513,32 +598,58 @@
         const favFilterBtn = document.getElementById('favFilterBtn');
         const toastBox = document.getElementById('toastBox');
 
+        // Helper: Get currently opened Chapter object
+        function getCurrentChapter() {
+            if (!state.activeChapterId) return null;
+            return state.chapters.find(ch => ch.id === state.activeChapterId) || null;
+        }
+
         // Initialize App
         function init() {
-            loadCards();
+            loadChapters();
             updateControlButtonsUI();
-            renderCards();
+            renderChaptersView();
             bindEvents();
         }
 
-        function loadCards() {
+        function loadChapters() {
             try {
-                const saved = localStorage.getItem(STORAGE_KEY);
-                if (saved) {
-                    state.cards = JSON.parse(saved);
-                } else {
-                    state.cards = JSON.parse(JSON.stringify(DEFAULT_CARDS));
-                    saveCards();
+                const savedChapters = localStorage.getItem(CHAPTERS_STORAGE_KEY);
+                if (savedChapters) {
+                    const parsed = JSON.parse(savedChapters);
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        state.chapters = parsed;
+                        return;
+                    }
                 }
+                // Migrate legacy single-list cards into Chapter 1 if present
+                const legacyCards = localStorage.getItem(LEGACY_STORAGE_KEY);
+                if (legacyCards) {
+                    const parsedCards = JSON.parse(legacyCards);
+                    if (Array.isArray(parsedCards) && parsedCards.length > 0) {
+                        state.chapters = [
+                            {
+                                id: 'ch_1',
+                                title: 'Chapter 1',
+                                subtitle: 'Saved Vocabulary',
+                                cards: parsedCards
+                            }
+                        ];
+                        saveChapters();
+                        return;
+                    }
+                }
+                state.chapters = createDefaultChapters();
+                saveChapters();
             } catch (e) {
                 console.error('Failed to load from localStorage:', e);
-                state.cards = JSON.parse(JSON.stringify(DEFAULT_CARDS));
+                state.chapters = createDefaultChapters();
             }
         }
 
-        function saveCards() {
+        function saveChapters() {
             try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(state.cards));
+                localStorage.setItem(CHAPTERS_STORAGE_KEY, JSON.stringify(state.chapters));
             } catch (e) {
                 showToast('Storage full! Try using smaller images.');
             }
@@ -553,7 +664,126 @@
             }, 2200);
         }
 
-        // Helper: Speak a single utterance and return a Promise that resolves when finished
+        // =========================================================
+        // NAVIGATION BETWEEN HOME (CHAPTERS) & CHAPTER VOCAB VIEW
+        // =========================================================
+        window.openChapter = function(chapterId) {
+            const chapter = state.chapters.find(ch => ch.id === chapterId);
+            if (!chapter) return;
+
+            state.activeChapterId = chapter.id;
+            state.activeCardId = null;
+            state.filterFavoritesOnly = false;
+            state.autoPlay = false;
+            stopAutoPlayLoop();
+            stopSpeechSequence();
+
+            currentChapterHeaderTitle.textContent = chapter.title;
+            currentChapterHeaderSub.textContent = chapter.subtitle ? chapter.subtitle : 'Random Play';
+
+            chaptersView.classList.add('hidden');
+            vocabView.classList.remove('hidden');
+            vocabView.classList.add('flex');
+
+            updateControlButtonsUI();
+            renderCards();
+            window.scrollTo({ top: 0, behavior: 'instant' });
+        };
+
+        function closeChapterToHome() {
+            if (state.autoPlay) {
+                state.autoPlay = false;
+                stopAutoPlayLoop();
+            }
+            stopSpeechSequence();
+            state.activeChapterId = null;
+            state.activeCardId = null;
+
+            vocabView.classList.add('hidden');
+            vocabView.classList.remove('flex');
+            chaptersView.classList.remove('hidden');
+
+            renderChaptersView();
+            window.scrollTo({ top: 0, behavior: 'instant' });
+        }
+
+        // =========================================================
+        // RENDER VIEW 1: CHAPTERS HOME SCREEN
+        // =========================================================
+        function renderChaptersView() {
+            const totalChapters = state.chapters.length;
+            const totalWords = state.chapters.reduce((sum, ch) => sum + (ch.cards ? ch.cards.length : 0), 0);
+
+            totalChaptersBadge.textContent = `${totalChapters} Chapter${totalChapters === 1 ? '' : 's'}`;
+            totalWordsOverview.textContent = `${totalWords} total word${totalWords === 1 ? '' : 's'}`;
+
+            if (totalChapters === 0) {
+                chapterListContainer.innerHTML = `
+                    <div class="text-center py-20 px-6">
+                        <div class="w-16 h-16 rounded-2xl bg-[#DCE0F9] text-[#5B00FF] mx-auto mb-4 flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                            </svg>
+                        </div>
+                        <h3 class="text-base font-bold text-gray-800 mb-1">No Chapters Yet</h3>
+                        <p class="text-xs text-gray-500 mb-4">Tap the + button below to create Chapter 1 or any study topic.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            chapterListContainer.innerHTML = state.chapters.map((chapter, index) => {
+                const count = chapter.cards ? chapter.cards.length : 0;
+                const favCount = chapter.cards ? chapter.cards.filter(c => c.favorite).length : 0;
+
+                return `
+                    <div onclick="openChapter('${chapter.id}')" class="chapter-card relative rounded-2xl bg-[#DCE0F9] hover:bg-[#D2D7F6] p-4 cursor-pointer select-none shadow-2xs flex items-center justify-between gap-3">
+                        <div class="flex items-center space-x-3.5 min-w-0">
+                            <!-- Chapter Number Badge -->
+                            <div class="w-12 h-12 rounded-xl bg-[#5B00FF] text-white font-bold text-lg flex items-center justify-center shrink-0 shadow-xs">
+                                ${index + 1}
+                            </div>
+
+                            <!-- Chapter Title & Meta -->
+                            <div class="min-w-0">
+                                <h2 class="text-[17px] font-bold text-gray-900 font-kr truncate leading-snug">
+                                    ${escapeHTML(chapter.title)}
+                                </h2>
+                                ${chapter.subtitle ? `<p class="text-xs text-gray-600 truncate mt-0.5">${escapeHTML(chapter.subtitle)}</p>` : ''}
+                                <div class="flex items-center space-x-2.5 mt-1.5">
+                                    <span class="inline-flex items-center text-[11px] font-semibold px-2 py-0.5 rounded-md bg-white/80 text-[#5B00FF]">
+                                        ${count} word${count === 1 ? '' : 's'}
+                                    </span>
+                                    ${favCount > 0 ? `
+                                        <span class="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-md bg-rose-50 text-rose-600">
+                                            ♥ ${favCount}
+                                        </span>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Actions: Edit Chapter + Open Arrow -->
+                        <div class="flex items-center space-x-1 shrink-0">
+                            <button type="button" onclick="event.stopPropagation(); openEditChapterModal('${chapter.id}')" title="Edit Chapter" class="p-2 rounded-full text-gray-500 hover:text-gray-800 hover:bg-white/60 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                </svg>
+                            </button>
+                            <div class="p-1.5 text-[#5B00FF]">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.4">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // =========================================================
+        // SPEECH & PRONUNCIATION LOOP (KR -> NP -> KR)
+        // =========================================================
         function speakUtteranceAsync(text, lang, token) {
             return new Promise((resolve) => {
                 if (!('speechSynthesis' in window) || token !== state.speechSequenceToken) {
@@ -566,13 +796,11 @@
                     utterance.lang = lang;
                     utterance.rate = state.speed;
 
-                    // Pick the best matching voice if available (with graceful fallback for Nepali)
                     const voices = window.speechSynthesis.getVoices();
                     if (voices.length > 0) {
                         const langPrefix = lang.split('-')[0].toLowerCase();
                         let matchedVoice = voices.find(v => v.lang.toLowerCase() === lang.toLowerCase()) ||
                                            voices.find(v => v.lang.toLowerCase().startsWith(langPrefix));
-                        // Fallback to Hindi (hi-IN) voice for Devanagari script if ne-NP isn't installed on device
                         if (!matchedVoice && langPrefix === 'ne') {
                             matchedVoice = voices.find(v => v.lang.toLowerCase().startsWith('hi'));
                         }
@@ -589,7 +817,6 @@
                         resolve();
                     };
 
-                    // Safety timeout in case a mobile browser fails to fire onend
                     const estimatedDuration = Math.max(1500, (text.length * 160) / state.speed + 1200);
                     const safetyTimer = setTimeout(finish, estimatedDuration);
 
@@ -604,16 +831,10 @@
             });
         }
 
-        // Helper: Cancellable pause between speech steps
-        function waitStep(ms, token) {
-            return new Promise((resolve) => {
-                setTimeout(() => {
-                    resolve();
-                }, ms);
-            });
+        function waitStep(ms) {
+            return new Promise((resolve) => setTimeout(resolve, ms));
         }
 
-        // Stop any active speech sequence immediately
         function stopSpeechSequence() {
             state.speechSequenceToken++;
             if ('speechSynthesis' in window) {
@@ -623,41 +844,33 @@
             }
         }
 
-        /**
-         * 3-Step Sequential Pronunciation Loop:
-         * 1. Pronounce Korean word (ko-KR)
-         * 2. Pronounce Nepali translation (ne-NP)
-         * 3. Pronounce Korean word a second time (ko-KR)
-         */
         async function playCardSequence(card) {
             if (!card) return;
             stopSpeechSequence();
             const currentToken = state.speechSequenceToken;
             const pauseBetweenMs = Math.round(350 / state.speed);
 
-            // Step 1: Korean (1st time)
             await speakUtteranceAsync(card.korean, 'ko-KR', currentToken);
             if (currentToken !== state.speechSequenceToken) return;
 
-            await waitStep(pauseBetweenMs, currentToken);
+            await waitStep(pauseBetweenMs);
             if (currentToken !== state.speechSequenceToken) return;
 
-            // Step 2: Nepali translation
             if (card.nepali) {
                 await speakUtteranceAsync(card.nepali, 'ne-NP', currentToken);
                 if (currentToken !== state.speechSequenceToken) return;
 
-                await waitStep(pauseBetweenMs, currentToken);
+                await waitStep(pauseBetweenMs);
                 if (currentToken !== state.speechSequenceToken) return;
             }
 
-            // Step 3: Korean (2nd time)
             await speakUtteranceAsync(card.korean, 'ko-KR', currentToken);
         }
 
-        // Update Top Toggle Button Visuals (Solid Blue vs Faded Light Blue like screenshots)
+        // =========================================================
+        // RENDER VIEW 2: VOCABULARY CARDS INSIDE ACTIVE CHAPTER
+        // =========================================================
         function updateControlButtonsUI() {
-            // Translation Toggle Button
             if (state.showTranslation) {
                 toggleTranslationBtn.classList.remove('bg-[#90CAF9]', 'opacity-75');
                 toggleTranslationBtn.classList.add('bg-[#2196F3]');
@@ -666,7 +879,6 @@
                 toggleTranslationBtn.classList.add('bg-[#90CAF9]', 'opacity-75');
             }
 
-            // Picture Toggle Button
             if (state.showImage) {
                 toggleImageBtn.classList.remove('bg-[#90CAF9]', 'opacity-75');
                 toggleImageBtn.classList.add('bg-[#2196F3]');
@@ -675,7 +887,6 @@
                 toggleImageBtn.classList.add('bg-[#90CAF9]', 'opacity-75');
             }
 
-            // Auto Play Switch
             autoPlayToggle.setAttribute('aria-checked', state.autoPlay);
             if (state.autoPlay) {
                 autoPlayToggle.classList.remove('bg-gray-200');
@@ -689,7 +900,6 @@
                 autoPlayKnob.classList.add('translate-x-0.5', 'bg-[#BDBDBD]');
             }
 
-            // Favorites Filter Button
             if (state.filterFavoritesOnly) {
                 favFilterBtn.classList.remove('bg-white/15', 'text-white');
                 favFilterBtn.classList.add('bg-white', 'text-rose-500');
@@ -699,15 +909,15 @@
             }
         }
 
-        // Get Filtered Cards
         function getVisibleCards() {
+            const chapter = getCurrentChapter();
+            if (!chapter || !chapter.cards) return [];
             if (state.filterFavoritesOnly) {
-                return state.cards.filter(c => c.favorite);
+                return chapter.cards.filter(c => c.favorite);
             }
-            return state.cards;
+            return chapter.cards;
         }
 
-        // Render All Vocabulary Cards
         function renderCards() {
             const visibleCards = getVisibleCards();
             cardCountLabel.textContent = `${visibleCards.length} word${visibleCards.length === 1 ? '' : 's'}`;
@@ -715,8 +925,13 @@
             if (visibleCards.length === 0) {
                 cardListContainer.innerHTML = `
                     <div class="text-center py-16 px-4">
-                        <p class="text-gray-400 text-sm mb-3">No vocabulary cards found.</p>
-                        ${state.filterFavoritesOnly ? `<button onclick="toggleFavFilter()" class="text-xs font-semibold text-[#5B00FF] underline">Show all words</button>` : ''}
+                        <p class="text-gray-400 text-sm mb-3">
+                            ${state.filterFavoritesOnly ? 'No favorite words in this chapter.' : 'This chapter is empty yet.'}
+                        </p>
+                        ${state.filterFavoritesOnly
+                            ? `<button onclick="toggleFavFilter()" class="text-xs font-semibold text-[#5B00FF] underline">Show all words</button>`
+                            : `<p class="text-xs text-gray-400">Tap <strong class="text-[#5B00FF]">+</strong> below to add a word or <strong class="text-[#2196F3]">Bulk Import</strong> above.</p>`
+                        }
                     </div>
                 `;
                 return;
@@ -726,7 +941,6 @@
                 const isActive = state.activeCardId === card.id;
                 const hasPicture = Boolean(card.customImage || (card.imageKey && ILLUSTRATIONS[card.imageKey]));
 
-                // Card Colors matching screenshots: soft lavender (#DCE0F9) vs active deep blue (#1565C0)
                 const cardBgClass = isActive
                     ? 'bg-[#1565C0] text-white shadow-md'
                     : 'bg-[#DCE0F9] text-gray-900 hover:bg-[#D2D7F6]';
@@ -743,7 +957,6 @@
                     ? 'text-blue-300/80 hover:text-white'
                     : 'text-[#8E8E93] hover:text-gray-700';
 
-                // Picture HTML if showImage is true and card has an image
                 let pictureHTML = '';
                 if (state.showImage && hasPicture) {
                     if (card.customImage) {
@@ -761,7 +974,6 @@
                     }
                 }
 
-                // Translation HTML if showTranslation is true
                 const translationHTML = state.showTranslation
                     ? `<div class="mt-1.5 text-[17px] font-bold font-np tracking-tight ${nepaliTextClass}">${escapeHTML(card.nepali)}</div>`
                     : '';
@@ -786,7 +998,7 @@
                             </svg>
                         </button>
 
-                        <!-- Bottom-Right Heart Icon (matching screenshot) -->
+                        <!-- Bottom-Right Heart Icon -->
                         <button type="button" onclick="event.stopPropagation(); toggleFavorite('${card.id}')" title="Favorite" class="absolute bottom-2.5 right-3 p-1 rounded-full transition transform active:scale-125 ${heartColorClass}">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
@@ -809,14 +1021,16 @@
 
         // Card Click Handler
         window.handleCardClick = function(id) {
-            // If Auto Play is running, stop it when user manually taps a card
+            const chapter = getCurrentChapter();
+            if (!chapter) return;
+
             if (state.autoPlay) {
                 state.autoPlay = false;
                 stopAutoPlayLoop();
                 updateControlButtonsUI();
             }
             state.activeCardId = id;
-            const card = state.cards.find(c => c.id === id);
+            const card = chapter.cards.find(c => c.id === id);
             renderCards();
             if (card) {
                 playCardSequence(card);
@@ -825,10 +1039,12 @@
 
         // Toggle Favorite
         window.toggleFavorite = function(id) {
-            const card = state.cards.find(c => c.id === id);
+            const chapter = getCurrentChapter();
+            if (!chapter) return;
+            const card = chapter.cards.find(c => c.id === id);
             if (card) {
                 card.favorite = !card.favorite;
-                saveCards();
+                saveChapters();
                 renderCards();
             }
         };
@@ -885,11 +1101,9 @@
                     el.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
 
-                // Wait for all 3 steps (Korean -> Nepali -> Korean) to complete
                 await playCardSequence(currentCard);
                 if (!state.autoPlay) return;
 
-                // Brief pause controlled by the speed slider before advancing to the next card
                 currentIndex = (currentIndex + 1) % list.length;
                 const pauseAfterCardMs = Math.round(800 / state.speed);
                 state.autoPlayTimer = setTimeout(playStep, pauseAfterCardMs);
@@ -905,18 +1119,65 @@
             }
         }
 
-        // Shuffle Cards
+        // Shuffle Cards in Active Chapter
         function shuffleCards() {
-            for (let i = state.cards.length - 1; i > 0; i--) {
+            const chapter = getCurrentChapter();
+            if (!chapter || chapter.cards.length === 0) return;
+
+            for (let i = chapter.cards.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
-                [state.cards[i], state.cards[j]] = [state.cards[j], state.cards[i]];
+                [chapter.cards[i], chapter.cards[j]] = [chapter.cards[j], chapter.cards[i]];
             }
-            saveCards();
+            saveChapters();
             renderCards();
             showToast('Cards shuffled');
         }
 
-        // Modal Logic: Add & Edit Words
+        // =========================================================
+        // MODAL 1 LOGIC: ADD & EDIT CHAPTERS
+        // =========================================================
+        const chapterModal = document.getElementById('chapterModal');
+        const chapterForm = document.getElementById('chapterForm');
+        const chapterModalTitle = document.getElementById('chapterModalTitle');
+        const editChapterId = document.getElementById('editChapterId');
+        const inputChapterTitle = document.getElementById('inputChapterTitle');
+        const inputChapterSubtitle = document.getElementById('inputChapterSubtitle');
+        const deleteChapterBtn = document.getElementById('deleteChapterBtn');
+
+        function openAddChapterModal() {
+            const nextNum = state.chapters.length + 1;
+            chapterModalTitle.textContent = 'Add New Chapter';
+            editChapterId.value = '';
+            inputChapterTitle.value = `Chapter ${nextNum}`;
+            inputChapterSubtitle.value = '';
+            deleteChapterBtn.classList.add('hidden');
+            chapterModal.classList.remove('hidden');
+            chapterModal.classList.add('flex');
+            inputChapterTitle.focus();
+            inputChapterTitle.select();
+        }
+
+        window.openEditChapterModal = function(id) {
+            const chapter = state.chapters.find(ch => ch.id === id);
+            if (!chapter) return;
+
+            chapterModalTitle.textContent = 'Edit Chapter';
+            editChapterId.value = chapter.id;
+            inputChapterTitle.value = chapter.title;
+            inputChapterSubtitle.value = chapter.subtitle || '';
+            deleteChapterBtn.classList.remove('hidden');
+            chapterModal.classList.remove('hidden');
+            chapterModal.classList.add('flex');
+        };
+
+        function closeChapterModal() {
+            chapterModal.classList.add('hidden');
+            chapterModal.classList.remove('flex');
+        }
+
+        // =========================================================
+        // MODAL 2 LOGIC: ADD & EDIT WORDS IN ACTIVE CHAPTER
+        // =========================================================
         const wordModal = document.getElementById('wordModal');
         const wordForm = document.getElementById('wordForm');
         const modalTitle = document.getElementById('modalTitle');
@@ -946,7 +1207,9 @@
         }
 
         window.openEditModal = function(id) {
-            const card = state.cards.find(c => c.id === id);
+            const chapter = getCurrentChapter();
+            if (!chapter) return;
+            const card = chapter.cards.find(c => c.id === id);
             if (!card) return;
 
             modalTitle.textContent = 'Edit Vocabulary Card';
@@ -985,7 +1248,9 @@
             }
         }
 
-        // Practice Modal Logic
+        // =========================================================
+        // MODAL 4 LOGIC: PRACTICE FLASHCARD QUIZ
+        // =========================================================
         const practiceModal = document.getElementById('practiceModal');
         const practiceCounter = document.getElementById('practiceCounter');
         const practiceImageContainer = document.getElementById('practiceImageContainer');
@@ -1028,7 +1293,6 @@
             practiceKorean.textContent = card.korean;
             practiceNepali.textContent = card.nepali;
 
-            // Show image in practice mode if available & picture toggle is on
             practiceImageContainer.innerHTML = '';
             if (state.showImage) {
                 if (card.customImage) {
@@ -1047,8 +1311,65 @@
             }
         }
 
-        // Bind All Event Listeners
+        // =========================================================
+        // BIND ALL EVENT LISTENERS
+        // =========================================================
         function bindEvents() {
+            // Home Screen Events
+            document.getElementById('openAddChapterModalBtn').addEventListener('click', openAddChapterModal);
+            document.getElementById('closeChapterModalBtn').addEventListener('click', closeChapterModal);
+            document.getElementById('cancelChapterModalBtn').addEventListener('click', closeChapterModal);
+
+            chapterForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const title = inputChapterTitle.value.trim();
+                const subtitle = inputChapterSubtitle.value.trim();
+                if (!title) return;
+
+                const id = editChapterId.value;
+                if (id) {
+                    const ch = state.chapters.find(c => c.id === id);
+                    if (ch) {
+                        ch.title = title;
+                        ch.subtitle = subtitle;
+                    }
+                    showToast('Chapter updated');
+                } else {
+                    const newChapter = {
+                        id: 'ch_' + Date.now(),
+                        title,
+                        subtitle,
+                        cards: []
+                    };
+                    state.chapters.push(newChapter);
+                    showToast(`${title} created`);
+                }
+
+                saveChapters();
+                renderChaptersView();
+                closeChapterModal();
+            });
+
+            deleteChapterBtn.addEventListener('click', () => {
+                const id = editChapterId.value;
+                if (!id) return;
+                state.chapters = state.chapters.filter(c => c.id !== id);
+                saveChapters();
+                renderChaptersView();
+                closeChapterModal();
+                showToast('Chapter deleted');
+            });
+
+            document.getElementById('resetAllChaptersBtn').addEventListener('click', () => {
+                state.chapters = createDefaultChapters();
+                saveChapters();
+                renderChaptersView();
+                showToast('Reset to Chapter 1 default');
+            });
+
+            // Back Button inside Chapter -> Returns to Chapters Home Screen
+            document.getElementById('backToChaptersBtn').addEventListener('click', closeChapterToHome);
+
             // Toggle Translation Globally
             toggleTranslationBtn.addEventListener('click', () => {
                 state.showTranslation = !state.showTranslation;
@@ -1073,25 +1394,32 @@
                 state.speed = parseFloat(e.target.value);
             });
 
-            // Shuffle Buttons
-            document.getElementById('shuffleBtn').addEventListener('click', shuffleCards);
+            // Shuffle Button
             document.getElementById('shuffleTextBtn').addEventListener('click', shuffleCards);
 
             // Favorites Filter
             favFilterBtn.addEventListener('click', toggleFavFilter);
 
-            // Reset Data
+            // Clear / Reset Current Chapter
             document.getElementById('resetDataBtn').addEventListener('click', () => {
-                state.cards = JSON.parse(JSON.stringify(DEFAULT_CARDS));
+                const chapter = getCurrentChapter();
+                if (!chapter) return;
+
+                if (chapter.id === 'ch_1') {
+                    chapter.cards = JSON.parse(JSON.stringify(DEFAULT_CARDS));
+                    showToast('Chapter 1 restored to default');
+                } else {
+                    chapter.cards = [];
+                    showToast('Chapter cleared');
+                }
                 state.filterFavoritesOnly = false;
                 state.activeCardId = null;
-                saveCards();
+                saveChapters();
                 updateControlButtonsUI();
                 renderCards();
-                showToast('Reset to default vocabulary');
             });
 
-            // Add / Edit Modal Events
+            // Add / Edit Word Modal Events
             document.getElementById('openAddModalBtn').addEventListener('click', openAddModal);
             document.getElementById('closeModalBtn').addEventListener('click', closeWordModal);
             document.getElementById('cancelModalBtn').addEventListener('click', closeWordModal);
@@ -1102,7 +1430,6 @@
                 updateModalImagePreview(state.tempUploadedImage);
             });
 
-            // Local File Upload -> Resize via Canvas so localStorage stays lightweight
             inputImageFile.addEventListener('change', (e) => {
                 const file = e.target.files[0];
                 if (!file) return;
@@ -1148,16 +1475,18 @@
                 updateModalImagePreview(null);
             });
 
-            // Save Form
             wordForm.addEventListener('submit', (e) => {
                 e.preventDefault();
+                const chapter = getCurrentChapter();
+                if (!chapter) return;
+
                 const korean = inputKorean.value.trim();
                 const nepali = inputNepali.value.trim();
                 if (!korean || !nepali) return;
 
                 const id = editCardId.value;
                 if (id) {
-                    const card = state.cards.find(c => c.id === id);
+                    const card = chapter.cards.find(c => c.id === id);
                     if (card) {
                         card.korean = korean;
                         card.nepali = nepali;
@@ -1174,21 +1503,22 @@
                         customImage: state.tempUploadedImage,
                         favorite: false
                     };
-                    state.cards.unshift(newCard);
+                    chapter.cards.unshift(newCard);
                     showToast('New word added');
                 }
 
-                saveCards();
+                saveChapters();
                 renderCards();
                 closeWordModal();
             });
 
-            // Delete Card
             deleteCardBtn.addEventListener('click', () => {
+                const chapter = getCurrentChapter();
+                if (!chapter) return;
                 const id = editCardId.value;
                 if (!id) return;
-                state.cards = state.cards.filter(c => c.id !== id);
-                saveCards();
+                chapter.cards = chapter.cards.filter(c => c.id !== id);
+                saveChapters();
                 renderCards();
                 closeWordModal();
                 showToast('Card deleted');
@@ -1233,10 +1563,6 @@
             const bulkLineCount = document.getElementById('bulkLineCount');
             const bulkReplaceExisting = document.getElementById('bulkReplaceExisting');
 
-            /**
-             * Parses each line into: { korean, nepali, imageUrl }
-             * Safely extracts trailing http:// or https:// URLs without breaking hyphens inside the URL itself.
-             */
             function parseBulkLines(rawText) {
                 const lines = rawText.split(/\r?\n/);
                 const parsed = [];
@@ -1245,14 +1571,12 @@
                     if (!trimmed) continue;
 
                     let imageUrl = null;
-                    // Check if the line ends with an http(s):// image URL (preceded by separator or whitespace)
                     const urlMatch = trimmed.match(/(?:^|\s*(?:[-–—:|]|\t)\s*|\s+)(https?:\/\/\S+)$/i);
                     if (urlMatch) {
                         imageUrl = urlMatch[1].trim();
                         trimmed = trimmed.slice(0, urlMatch.index).trim();
                     }
 
-                    // Split remaining text into Korean and Nepali by hyphen (-, –, —), colon (:), pipe (|), or tab
                     const match = trimmed.match(/^(.+?)\s*(?:[-–—:|]|\t)\s*(.+)$/);
                     if (match) {
                         const korean = match[1].trim();
@@ -1291,6 +1615,9 @@
 
             document.getElementById('bulkForm').addEventListener('submit', (e) => {
                 e.preventDefault();
+                const chapter = getCurrentChapter();
+                if (!chapter) return;
+
                 const items = parseBulkLines(bulkTextarea.value);
                 if (items.length === 0) {
                     showToast('Format: Korean - Nepali - ImageURL');
@@ -1307,12 +1634,12 @@
                 }));
 
                 if (bulkReplaceExisting.checked) {
-                    state.cards = newCards;
+                    chapter.cards = newCards;
                 } else {
-                    state.cards = [...newCards, ...state.cards];
+                    chapter.cards = [...newCards, ...chapter.cards];
                 }
 
-                saveCards();
+                saveChapters();
                 renderCards();
                 closeBulkModal();
                 const imgCount = newCards.filter(c => c.customImage).length;
@@ -1322,14 +1649,12 @@
             });
         }
 
-        // Preload voices on browsers that populate them asynchronously
         if ('speechSynthesis' in window) {
             window.speechSynthesis.onvoiceschanged = () => {
                 window.speechSynthesis.getVoices();
             };
         }
 
-        // Start on Window Load
         window.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
